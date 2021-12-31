@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package grpc;
+
+option go_package = "example.com/go-car-grpc;go_car_grpc";
+
+service CarManagement {
+  rpc CreateNewCar (NewCar) returns (Car) {}
+  rpc GetCars (GetCarsParams) returns (CarList) {}
+}
+
+message NewCar {
+  string mark = 1;
+  string model = 2;
+  int32 price = 3;
+}
+
+message Car {
+  string mark = 1;
+  string model = 2;
+  int32 price = 3;
+  int32 id = 4;
+}
+
+message GetCarsParams {
+
+}
+
+message CarList {
+  repeated Car cars = 1;
+}
