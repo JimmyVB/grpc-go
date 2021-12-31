@@ -19,7 +19,7 @@ message Car {
   string mark = 1;
   string model = 2;
   int32 price = 3;
-  int32 id = 4;
+  string id = 4;
 }
 
 message GetCarsParams {
