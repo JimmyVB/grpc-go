@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CarManagementClient interface {
 	CreateNewCar(ctx context.Context, in *NewCar, opts ...grpc.CallOption) (*Car, error)
-	GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarList, error)
+	GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarsList, error)
 }
 
 type carManagementClient struct {
@@ -43,8 +43,8 @@ func (c *carManagementClient) CreateNewCar(ctx context.Context, in *NewCar, opts
 	return out, nil
 }
 
-func (c *carManagementClient) GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarList, error) {
-	out := new(CarList)
+func (c *carManagementClient) GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarsList, error) {
+	out := new(CarsList)
 	err := c.cc.Invoke(ctx, "/grpc.CarManagement/GetCars", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func (c *carManagementClient) GetCars(ctx context.Context, in *GetCarsParams, op
 // for forward compatibility
 type CarManagementServer interface {
 	CreateNewCar(context.Context, *NewCar) (*Car, error)
-	GetCars(context.Context, *GetCarsParams) (*CarList, error)
+	GetCars(context.Context, *GetCarsParams) (*CarsList, error)
 	mustEmbedUnimplementedCarManagementServer()
 }
 
@@ -68,7 +68,7 @@ type UnimplementedCarManagementServer struct {
 func (UnimplementedCarManagementServer) CreateNewCar(context.Context, *NewCar) (*Car, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewCar not implemented")
 }
-func (UnimplementedCarManagementServer) GetCars(context.Context, *GetCarsParams) (*CarList, error) {
+func (UnimplementedCarManagementServer) GetCars(context.Context, *GetCarsParams) (*CarsList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCars not implemented")
 }
 func (UnimplementedCarManagementServer) mustEmbedUnimplementedCarManagementServer() {}
