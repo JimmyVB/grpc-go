@@ -22,8 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CarManagementClient interface {
-	CreateNewCar(ctx context.Context, in *NewCar, opts ...grpc.CallOption) (*Car, error)
+	CreateNewCar(ctx context.Context, in *NewCarParams, opts ...grpc.CallOption) (*Car, error)
 	GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarsList, error)
+	GetOneCar(ctx context.Context, in *GetOneCarParams, opts ...grpc.CallOption) (*Car, error)
+	UpdateCar(ctx context.Context, in *UpdateCarParams, opts ...grpc.CallOption) (*Car, error)
 }
 
 type carManagementClient struct {
@@ -34,7 +36,7 @@ func NewCarManagementClient(cc grpc.ClientConnInterface) CarManagementClient {
 	return &carManagementClient{cc}
 }
 
-func (c *carManagementClient) CreateNewCar(ctx context.Context, in *NewCar, opts ...grpc.CallOption) (*Car, error) {
+func (c *carManagementClient) CreateNewCar(ctx context.Context, in *NewCarParams, opts ...grpc.CallOption) (*Car, error) {
 	out := new(Car)
 	err := c.cc.Invoke(ctx, "/grpc.CarManagement/CreateNewCar", in, out, opts...)
 	if err != nil {
@@ -52,12 +54,32 @@ func (c *carManagementClient) GetCars(ctx context.Context, in *GetCarsParams, op
 	return out, nil
 }
 
+func (c *carManagementClient) GetOneCar(ctx context.Context, in *GetOneCarParams, opts ...grpc.CallOption) (*Car, error) {
+	out := new(Car)
+	err := c.cc.Invoke(ctx, "/grpc.CarManagement/GetOneCar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *carManagementClient) UpdateCar(ctx context.Context, in *UpdateCarParams, opts ...grpc.CallOption) (*Car, error) {
+	out := new(Car)
+	err := c.cc.Invoke(ctx, "/grpc.CarManagement/UpdateCar", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CarManagementServer is the server API for CarManagement service.
 // All implementations must embed UnimplementedCarManagementServer
 // for forward compatibility
 type CarManagementServer interface {
-	CreateNewCar(context.Context, *NewCar) (*Car, error)
+	CreateNewCar(context.Context, *NewCarParams) (*Car, error)
 	GetCars(context.Context, *GetCarsParams) (*CarsList, error)
+	GetOneCar(context.Context, *GetOneCarParams) (*Car, error)
+	UpdateCar(context.Context, *UpdateCarParams) (*Car, error)
 	mustEmbedUnimplementedCarManagementServer()
 }
 
@@ -65,11 +87,17 @@ type CarManagementServer interface {
 type UnimplementedCarManagementServer struct {
 }
 
-func (UnimplementedCarManagementServer) CreateNewCar(context.Context, *NewCar) (*Car, error) {
+func (UnimplementedCarManagementServer) CreateNewCar(context.Context, *NewCarParams) (*Car, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewCar not implemented")
 }
 func (UnimplementedCarManagementServer) GetCars(context.Context, *GetCarsParams) (*CarsList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCars not implemented")
+}
+func (UnimplementedCarManagementServer) GetOneCar(context.Context, *GetOneCarParams) (*Car, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOneCar not implemented")
+}
+func (UnimplementedCarManagementServer) UpdateCar(context.Context, *UpdateCarParams) (*Car, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCar not implemented")
 }
 func (UnimplementedCarManagementServer) mustEmbedUnimplementedCarManagementServer() {}
 
@@ -85,7 +113,7 @@ func RegisterCarManagementServer(s grpc.ServiceRegistrar, srv CarManagementServe
 }
 
 func _CarManagement_CreateNewCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewCar)
+	in := new(NewCarParams)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -97,7 +125,7 @@ func _CarManagement_CreateNewCar_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/grpc.CarManagement/CreateNewCar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarManagementServer).CreateNewCar(ctx, req.(*NewCar))
+		return srv.(CarManagementServer).CreateNewCar(ctx, req.(*NewCarParams))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -120,6 +148,42 @@ func _CarManagement_GetCars_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CarManagement_GetOneCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOneCarParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CarManagementServer).GetOneCar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.CarManagement/GetOneCar",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CarManagementServer).GetOneCar(ctx, req.(*GetOneCarParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CarManagement_UpdateCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCarParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CarManagementServer).UpdateCar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.CarManagement/UpdateCar",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CarManagementServer).UpdateCar(ctx, req.(*UpdateCarParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CarManagement_ServiceDesc is the grpc.ServiceDesc for CarManagement service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +198,14 @@ var CarManagement_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCars",
 			Handler:    _CarManagement_GetCars_Handler,
+		},
+		{
+			MethodName: "GetOneCar",
+			Handler:    _CarManagement_GetOneCar_Handler,
+		},
+		{
+			MethodName: "UpdateCar",
+			Handler:    _CarManagement_UpdateCar_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
