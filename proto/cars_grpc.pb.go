@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CarManagementClient interface {
 	CreateNewCar(ctx context.Context, in *NewCarParams, opts ...grpc.CallOption) (*Car, error)
-	GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarsList, error)
+	GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*Data, error)
 	GetOneCar(ctx context.Context, in *GetOneCarParams, opts ...grpc.CallOption) (*Car, error)
 	UpdateCar(ctx context.Context, in *UpdateCarParams, opts ...grpc.CallOption) (*Car, error)
 }
@@ -45,8 +45,8 @@ func (c *carManagementClient) CreateNewCar(ctx context.Context, in *NewCarParams
 	return out, nil
 }
 
-func (c *carManagementClient) GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*CarsList, error) {
-	out := new(CarsList)
+func (c *carManagementClient) GetCars(ctx context.Context, in *GetCarsParams, opts ...grpc.CallOption) (*Data, error) {
+	out := new(Data)
 	err := c.cc.Invoke(ctx, "/grpc.CarManagement/GetCars", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (c *carManagementClient) UpdateCar(ctx context.Context, in *UpdateCarParams
 // for forward compatibility
 type CarManagementServer interface {
 	CreateNewCar(context.Context, *NewCarParams) (*Car, error)
-	GetCars(context.Context, *GetCarsParams) (*CarsList, error)
+	GetCars(context.Context, *GetCarsParams) (*Data, error)
 	GetOneCar(context.Context, *GetOneCarParams) (*Car, error)
 	UpdateCar(context.Context, *UpdateCarParams) (*Car, error)
 	mustEmbedUnimplementedCarManagementServer()
@@ -90,7 +90,7 @@ type UnimplementedCarManagementServer struct {
 func (UnimplementedCarManagementServer) CreateNewCar(context.Context, *NewCarParams) (*Car, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewCar not implemented")
 }
-func (UnimplementedCarManagementServer) GetCars(context.Context, *GetCarsParams) (*CarsList, error) {
+func (UnimplementedCarManagementServer) GetCars(context.Context, *GetCarsParams) (*Data, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCars not implemented")
 }
 func (UnimplementedCarManagementServer) GetOneCar(context.Context, *GetOneCarParams) (*Car, error) {

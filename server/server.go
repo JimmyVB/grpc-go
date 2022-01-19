@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4"
 	"google.golang.org/grpc"
 	pb "grpc-go/proto"
@@ -45,7 +44,6 @@ func (server *CarManagementServer) CreateNewCar(ctx context.Context, in *pb.NewC
 		model text,
 		price int);
 		`
-	id := uuid.New()
 
 	_, err := server.conn.Exec(context.Background(), createSql)
 
@@ -53,7 +51,7 @@ func (server *CarManagementServer) CreateNewCar(ctx context.Context, in *pb.NewC
 		fmt.Fprintf(os.Stderr, "Table creation failed: %v\n", err)
 		os.Exit(1)
 	}
-	createdCar := &pb.Car{Id: id.String(), Mark: in.GetMark(), Model: in.GetModel(), Price: in.GetPrice()}
+	createdCar := &pb.Car{Mark: in.GetMark(), Model: in.GetModel(), Price: in.GetPrice()}
 	tx, err := server.conn.Begin(context.Background())
 	if err != nil {
 		log.Fatalf("conn.Begin Created failed: %v", err)
@@ -68,9 +66,10 @@ func (server *CarManagementServer) CreateNewCar(ctx context.Context, in *pb.NewC
 	return createdCar, nil
 }
 
-func (server *CarManagementServer) GetCars(ctx context.Context, in *pb.GetCarsParams) (*pb.CarsList, error) {
+func (server *CarManagementServer) GetCars(ctx context.Context, in *pb.GetCarsParams) (*pb.Data, error) {
 
 	var carsList *pb.CarsList = &pb.CarsList{}
+	var data *pb.Data = &pb.Data{}
 
 	rows, err := server.conn.Query(context.Background(), "select * from cars")
 	if err != nil {
@@ -85,7 +84,9 @@ func (server *CarManagementServer) GetCars(ctx context.Context, in *pb.GetCarsPa
 		}
 		carsList.Cars = append(carsList.Cars, &car)
 	}
-	return carsList, nil
+	data.Message = "Info correct"
+	data.Data = carsList.Cars
+	return data, nil
 }
 
 func (server *CarManagementServer) GetOneCar(ctx context.Context, in *pb.GetOneCarParams) (*pb.Car, error) {

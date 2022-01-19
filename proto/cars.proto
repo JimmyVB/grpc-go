@@ -6,7 +6,7 @@ option go_package = "example.com/go-car-grpc;go_car_grpc";
 
 service CarManagement {
   rpc CreateNewCar (NewCarParams) returns (Car) {}
-  rpc GetCars (GetCarsParams) returns (CarsList) {}
+  rpc GetCars (GetCarsParams) returns (Data) {}
   rpc GetOneCar (GetOneCarParams) returns (Car) {}
   rpc UpdateCar (UpdateCarParams) returns (Car) {}
 }
@@ -18,10 +18,10 @@ message NewCarParams {
 }
 
 message Car {
-  string mark = 1;
-  string model = 2;
-  int32 price = 3;
-  string id = 4;
+  int32 id = 1;
+  string mark = 2;
+  string model = 3;
+  int32 price = 4;
 }
 
 message GetCarsParams {
@@ -31,13 +31,18 @@ message CarsList {
   repeated Car cars = 1;
 }
 
+message Data {
+  string Message = 1;
+  repeated Car data = 2;
+}
+
 message GetOneCarParams {
   string id = 4;
 }
 
 message UpdateCarParams {
-  string mark = 1;
-  string model = 2;
-  int32 price = 3;
-  string id = 4;
+  int32 id = 1;
+  string mark = 2;
+  string model = 3;
+  int32 price = 4;
 }
